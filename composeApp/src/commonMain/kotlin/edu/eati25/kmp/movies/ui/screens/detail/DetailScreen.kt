@@ -1,4 +1,4 @@
-package edu.eati25.kmp.movies.ui.screens
+package edu.eati25.kmp.movies.ui.screens.detail
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
