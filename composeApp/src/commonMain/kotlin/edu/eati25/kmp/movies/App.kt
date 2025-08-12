@@ -2,10 +2,12 @@ package edu.eati25.kmp.movies
 
 import androidx.compose.runtime.*
 import edu.eati25.kmp.movies.ui.screens.HomeScreen
+import edu.eati25.kmp.movies.ui.screens.DetailScreen
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 @Preview
 fun App() {
-    HomeScreen()
+    //HomeScreen()
+    DetailScreen()
 }
