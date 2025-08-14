@@ -36,7 +36,12 @@ class MoviesRepository(
             originalTitle = originalTitle,
             originalLanguage = originalLanguage,
             popularity = popularity,
-            voteAverage = voteAverage
+            voteAverage = voteAverage,
+            isFavorite = false
         )
+    }
+
+    suspend fun toggleFavorite(movie: Movie) {
+        moviesDao.save(listOf(movie.copy(isFavorite = !movie.isFavorite)))
     }
 }
