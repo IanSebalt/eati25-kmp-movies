@@ -5,8 +5,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -19,9 +21,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,6 +41,7 @@ import edu.eati25.kmp.movies.data.Movie
 import edu.eati25.kmp.movies.ui.screens.common.LoadingIndicator
 import kmpmovies.composeapp.generated.resources.Res
 import kmpmovies.composeapp.generated.resources.app_name
+import kmpmovies.composeapp.generated.resources.search_movies
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
@@ -47,10 +55,30 @@ fun HomeScreen(
     MaterialTheme {
         Surface {
             val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+
+            var searchQuery by remember { mutableStateOf("") }
             Scaffold(
                 topBar = {
                     TopAppBar(
-                        { Text(stringResource(Res.string.app_name)) },
+                        {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                modifier = Modifier.padding(horizontal = 16.dp)
+                            )
+                            {
+                                Text(stringResource(Res.string.app_name))
+
+                                TextField(
+                                    value = searchQuery,
+                                    onValueChange = { searchQuery = it },
+                                    placeholder = { Text(stringResource(Res.string.search_movies)) },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(56.dp),
+                                )
+                            }
+                        },
                         scrollBehavior = scrollBehavior
                     )
                 },
@@ -60,19 +88,23 @@ fun HomeScreen(
 
                 LoadingIndicator(state.isLoading)
 
-                LazyVerticalGrid(
-                    columns = GridCells.Adaptive(120.dp),
-                    contentPadding = PaddingValues(4.dp),
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
-                    modifier = Modifier.padding(padding)
-                ) {
-                    items(state.movies, key = { it.id }) { movie ->
-                        MovieItem(movie) { onMovieClick(movie) }
+                Column {
+
+                    LazyVerticalGrid(
+                        columns = GridCells.Adaptive(120.dp),
+                        contentPadding = PaddingValues(4.dp),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                        modifier = Modifier.padding(padding)
+                    ) {
+                        items(state.movies.filter { it.title.contains(searchQuery, ignoreCase = true) }) { movie ->
+                            MovieItem(movie) {
+                                onMovieClick(movie)
+                            }
+                        }
                     }
                 }
             }
-
         }
     }
 }
